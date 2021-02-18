@@ -1,0 +1,15 @@
+import xarray as xr
+ds_color = xr.open_dataset('https://rsg.pml.ac.uk/thredds/dodsC/CCI_ALL-v4.2-DAILY') #daily
+#ds_color = xr.open_dataset('https://rsg.pml.ac.uk/thredds/dodsC/CCI_ALL-v4.2-8DAY') #8day
+for var in ds_color:
+    if not var=='chlor_a':
+        ds_color = ds_color.drop(var)
+ds_color
+
+#select a region
+subset = ds_color.sel(lat=slice(24,27),lon=slice(50,60))
+
+#only do this if you have enough memory, you might want to just do small regions then patch together
+subset = subset.load()
+
+subset.to_netcdf('./local_copy_color_cci.nc')
